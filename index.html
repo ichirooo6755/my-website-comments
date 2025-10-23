@@ -1,102 +1,121 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>サイト名 — コメント</title>
-    <meta name="description" content="コメント機能のデモ" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugawara Website</title>
+
     <style>
-        /* ===== 全体スタイル（既存のCSSに合わせて調整済み） ===== */
         :root {
-            --bg: #0f0f10;
-            --panel: #171717;
-            --muted: #bfbfbf;
-            --accent: #e8c547;
-            --card: #1b1b1b;
-            --text: #f2f2f2;
+            --bg: #111;
+            --text: #eee;
+            --muted: #aaa;
+            --accent: #58a6ff;
+            --panel: #1c1c1c;
+            --card: #222;
         }
 
-        html,
         body {
-            height: 100%;
             margin: 0;
             padding: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: system-ui, "Noto Sans JP", Arial;
+            font-family: "Inter", "Hiragino Sans", "Meiryo", sans-serif;
+            line-height: 1.6;
         }
 
-        .wrap {
-            max-width: 900px;
-            margin: 36px auto;
+        header {
+            background: var(--panel);
             padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #222;
         }
 
-        h1 {
-            margin-top: 0;
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
             color: var(--accent);
         }
 
-        /* コメントフォーム */
-        .comment-form {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-            padding: 14px;
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+            padding-left: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            border-top: 1px solid #222;
+        }
+
+        /* === コメントセクション === */
+        #comments {
+            padding: 20px;
+            background: var(--panel);
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .comment-form .row {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            flex-wrap: wrap;
+        #comment-form {
+            margin-bottom: 20px;
         }
 
-        .comment-form input[type="text"],
-        .comment-form textarea {
+        #comment-form input,
+        #comment-form textarea {
             width: 100%;
             padding: 10px;
+            border: 1px solid #333;
             border-radius: 8px;
-            border: 1px solid #2a2a2a;
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--card);
             color: var(--text);
-            box-sizing: border-box;
-            font-size: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
         }
 
-        .comment-form .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .btn {
+        #comment-form button {
             background: var(--accent);
             color: #111;
             border: none;
-            padding: 10px 14px;
             border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 700;
+            transition: background 0.2s;
         }
 
-        /* リスト */
+        #comment-form button:hover {
+            background: #77b3ff;
+        }
+
         #comment-list {
             list-style: none;
             padding: 0;
-            margin: 18px 0 0 0;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .comment-item {
             background: var(--card);
+            border-radius: 10px;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .comment-meta {
@@ -107,56 +126,92 @@
 
         .comment-body {
             white-space: pre-wrap;
-            color: var(--text);
-        }
-
-        /* 小画面対応 */
-        @media (max-width:520px) {
-            .wrap {
-                padding: 12px;
-            }
-
-            .comment-form .row {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 
 <body>
-    <main class="wrap" role="main">
-        <h1>コメント</h1>
+    <header>
+        <h1>Sugawara Website</h1>
+    </header>
 
-        <!-- コメントフォーム -->
-        <form id="comment-form" class="comment-form" aria-label="コメントフォーム">
-            <div class="row">
-                <input type="text" name="name" placeholder="名前（任意）" maxlength="100" />
-            </div>
-            <div style="margin-top:10px;">
-                <textarea name="comment" placeholder="コメントを入力してください（必須）" rows="4" required maxlength="2000"></textarea>
-            </div>
-            <div class="controls">
-                <button type="submit" class="btn">投稿</button>
-                <div style="color:var(--muted); font-size:0.9rem;">投稿はリロードで確実に反映されます。即時表示も試みます。</div>
-            </div>
-        </form>
+    <main>
+        <section id="intro">
+            <h2>Welcome</h2>
+            <p>これはテストサイトです。下にコメント機能を追加しました。</p>
+        </section>
 
-        <!-- 投稿一覧 -->
-        <section aria-live="polite" style="margin-top:18px;">
-            <h2 style="margin:0 0 8px 0; color:var(--accent);">投稿一覧</h2>
-            <ul id="comment-list" aria-label="投稿一覧">
-                <li class="comment-item" id="loading">読み込み中...</li>
+        <!-- === コメントセクション === -->
+        <section id="comments" tabindex="-1" aria-label="Comments">
+            <h2>コメント</h2>
+
+            <form id="comment-form" aria-label="コメントフォーム">
+                <input type="text" name="name" placeholder="名前（任意）">
+                <textarea name="comment" placeholder="コメントを入力してください" required rows="4"></textarea>
+                <button type="submit">投稿</button>
+            </form>
+
+            <ul id="comment-list">
+                <!-- コメントがここに表示されます -->
             </ul>
         </section>
+        <!-- /コメントセクション -->
+
     </main>
 
-    <script>
-        /* ===== ブラウザ側 JavaScript（そのまま貼る） ===== */
+    <footer>
+        <p>© 2025 Sugawara</p>
+    </footer>
 
-        (function () {
-            const form = document.getElementById('comment-form');
+    <script>
+        /* === コメント機能 === */
+        (async function () {
             const list = document.getElementById('comment-list');
-            const loadingEl = document.getElementById('loading');
+            const form = document.getElementById('comment-form');
+
+            async function loadComments() {
+                try {
+                    const res = await fetch('/.netlify/functions/getComments');
+                    if (!res.ok) throw new Error('getComments failed');
+                    const comments = await res.json();
+                    list.innerHTML = '';
+                    (comments || []).forEach(c => {
+                        const li = document.createElement('li');
+                        li.className = 'comment-item';
+                        li.innerHTML = `
+            <div class="comment-meta">${escapeHtml(c.name || '名無し')} ・ ${new Date(c.createdAt || Date.now()).toLocaleString()}</div>
+            <div class="comment-body">${escapeHtml(c.comment)}</div>
+          `;
+                        list.appendChild(li);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    list.innerHTML = '<li class="comment-item">コメントの読み込みに失敗しました。</li>';
+                }
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fd = new FormData(form);
+                const payload = {
+                    name: (fd.get('name') || '名無し'),
+                    comment: (fd.get('comment') || ''),
+                    createdAt: new Date().toISOString()
+                };
+                try {
+                    const res = await fetch('/.netlify/functions/addComment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) throw new Error('投稿失敗');
+                    form.reset();
+                    await loadComments();
+                } catch (err) {
+                    alert('コメント送信に失敗しました。');
+                    console.error(err);
+                }
+            });
 
             function escapeHtml(s) {
                 if (!s) return '';
@@ -168,73 +223,8 @@
                     .replaceAll("'", '&#39;');
             }
 
-            async function loadComments() {
-                try {
-                    const res = await fetch('/.netlify/functions/getComments');
-                    if (!res.ok) {
-                        list.innerHTML = '<li class="comment-item">コメントの取得に失敗しました。</li>';
-                        console.error('getComments status', res.status);
-                        return;
-                    }
-                    const comments = await res.json();
-                    renderComments(comments);
-                } catch (err) {
-                    list.innerHTML = '<li class="comment-item">コメントの読み込み中にエラーが発生しました。</li>';
-                    console.error(err);
-                }
-            }
-
-            function renderComments(comments) {
-                list.innerHTML = '';
-                if (!Array.isArray(comments) || comments.length === 0) {
-                    list.innerHTML = '<li class="comment-item">まだコメントはありません。</li>';
-                    return;
-                }
-                comments.forEach(c => {
-                    const li = document.createElement('li');
-                    li.className = 'comment-item';
-                    const time = c.createdAt ? new Date(c.createdAt).toLocaleString() : '';
-                    li.innerHTML = '<div class="comment-meta">' + escapeHtml(c.name || '名無し') + ' ・ ' + escapeHtml(time) + '</div>'
-                        + '<div class="comment-body">' + escapeHtml(c.comment || '') + '</div>';
-                    list.appendChild(li);
-                });
-            }
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const fd = new FormData(form);
-                const name = (fd.get('name') || '').toString().trim().slice(0, 100) || '名無し';
-                const comment = (fd.get('comment') || '').toString().trim().slice(0, 2000);
-                if (!comment) { alert('コメントを入力してください。'); return; }
-                const payload = { name, comment, createdAt: new Date().toISOString() };
-
-                // POST to Netlify Function
-                try {
-                    const res = await fetch('/.netlify/functions/addComment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!res.ok) {
-                        const text = await res.text();
-                        console.error('addComment error', res.status, text);
-                        alert('コメントの投稿に失敗しました。');
-                        return;
-                    }
-                    form.reset();
-                    // 即時反映を試みる
-                    await loadComments();
-                } catch (err) {
-                    console.error(err);
-                    alert('ネットワークエラーで投稿できませんでした。');
-                }
-            });
-
-            // 初回ロード
-            window.addEventListener('load', () => {
-                loadComments();
-            });
-
+            // 初期ロード
+            loadComments();
         })();
     </script>
 </body>

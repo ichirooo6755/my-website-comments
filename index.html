@@ -1,582 +1,242 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>菅原 一郎 — Portfolio</title>
-    <meta name="description" content="Ichiro Sugawara — photography, DIY digital-back projects, portfolio." />
+    <title>サイト名 — コメント</title>
+    <meta name="description" content="コメント機能のデモ" />
     <style>
+        /* ===== 全体スタイル（既存のCSSに合わせて調整済み） ===== */
         :root {
             --bg: #0f0f10;
             --panel: #171717;
             --muted: #bfbfbf;
             --accent: #e8c547;
             --card: #1b1b1b;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glow: #e8c547aa;
-        }
-
-        * {
-            box-sizing: border-box
+            --text: #f2f2f2;
         }
 
         html,
         body {
             height: 100%;
             margin: 0;
-            font-family: Inter, 'Noto Sans JP', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: linear-gradient(270deg, #0f0f10, #171717, #0f0f10);
-            background-size: 600% 600%;
-            animation: gradientBG 20s ease infinite;
-            color: #f2f2f2;
-            -webkit-font-smoothing: antialiased;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, "Noto Sans JP", Arial;
         }
 
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%
-            }
-
-            50% {
-                background-position: 100% 50%
-            }
-
-            100% {
-                background-position: 0% 50%
-            }
+        .wrap {
+            max-width: 900px;
+            margin: 36px auto;
+            padding: 20px;
         }
 
-        /* Fixed Tab Navigation Bar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1.5px solid var(--panel);
-            z-index: 1200;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 36px;
-            padding: 0 16px;
-            min-height: 54px;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 0.7px;
-            color: #fff;
-            user-select: none;
-            transition: background 0.28s;
-        }
-
-        .navbar a {
-            color: #fff;
-            text-decoration: none;
-            position: relative;
-            padding: 14px 0 12px 0;
-            margin: 0 10px;
-            transition: color .2s;
-            font-size: 1em;
-        }
-
-        .navbar a::after {
-            content: "";
-            position: absolute;
-            bottom: 6px;
-            left: 10%;
-            width: 0;
-            height: 2.5px;
-            background: var(--accent);
-            border-radius: 2px;
-            transition: width .2s;
-            opacity: 0.95;
-        }
-
-        .navbar a:hover {
+        h1 {
+            margin-top: 0;
             color: var(--accent);
         }
 
-        .navbar a:hover::after {
-            width: 80%;
-            left: 10%;
-            opacity: 1;
+        /* コメントフォーム */
+        .comment-form {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        /* HERO */
-        .hero {
-            height: 100vh;
+        .comment-form .row {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 24px;
-            position: relative;
-            z-index: 1;
-            user-select: none;
-        }
-
-        .hero h1 {
-            font-size: clamp(32px, 6.5vw, 64px);
-            font-weight: 900;
-            color: var(--accent);
-            margin: 0 0 12px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp .8s forwards;
-            animation-delay: .3s;
-            letter-spacing: .08em;
-        }
-
-        .hero h2 {
-            font-weight: 400;
-            font-size: 1.4rem;
-            color: var(--muted);
-            margin: 0 0 24px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp .8s forwards;
-            animation-delay: .6s;
-        }
-
-        .hero .social-links {
-            display: flex;
-            gap: 20px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp .8s forwards;
-            animation-delay: .9s;
-            justify-content: center;
-        }
-
-        .hero .social-links a {
-            font-size: 1.6rem;
-            color: var(--accent);
-            text-decoration: none;
-            transition: color .3s, transform .3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero .social-links a:hover {
-            color: #fff;
-            transform: scale(1.15);
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: none
-            }
-        }
-
-        /* SECTION base */
-        main {
-            padding-top: 64px;
-        }
-
-        section {
-            max-width: 1100px;
-            margin: 0 auto 80px;
-            padding: 0 24px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity .8s ease, transform .8s ease;
-        }
-
-        section.in-view {
-            opacity: 1;
-            transform: none;
-        }
-
-        /* ABOUT */
-        #about {
-            display: flex;
-            gap: 48px;
-            align-items: center;
-            margin-top: 48px;
+            gap: 10px;
+            align-items: flex-start;
             flex-wrap: wrap;
         }
 
-        #about .portrait {
-            flex: 1 1 320px;
-            max-width: 320px;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(232, 197, 71, 0.5);
-            border: 3px solid var(--accent);
-        }
-
-        #about .portrait img {
+        .comment-form input[type="text"],
+        .comment-form textarea {
             width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            box-sizing: border-box;
+            font-size: 14px;
         }
 
-        #about .text {
-            flex: 2 1 480px;
-            color: var(--muted);
-            font-size: 1.05rem;
-            line-height: 1.6;
-            letter-spacing: .03em;
+        .comment-form .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            align-items: center;
         }
 
-        #about .text h2 {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 2rem;
-            margin-bottom: 12px;
-            letter-spacing: .08em;
-        }
-
-        /* WORKS / GALLERY */
-        #works h2 {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 2rem;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            margin-top: 12px;
-        }
-
-        .thumb {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
+        .btn {
+            background: var(--accent);
+            color: #111;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 0 12px rgba(0, 0, 0, .4);
-            transition: transform .3s, box-shadow .3s;
-            background: var(--card);
+            font-weight: 700;
         }
 
-        .thumb img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-            transition: transform .3s ease;
-        }
-
-        .thumb .overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, .72) 100%);
-            opacity: 0;
-            transition: opacity .3s;
+        /* リスト */
+        #comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 18px 0 0 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 16px;
-            color: #fff;
-            font-weight: 700;
+            gap: 10px;
         }
 
-        .thumb .desc {
-            font-weight: 400;
-            color: var(--muted);
-            font-size: .85rem;
-            margin-top: 6px;
-        }
-
-        .thumb:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(232, 197, 71, .14);
-        }
-
-        .thumb:hover img {
-            transform: scale(1.08);
-        }
-
-        .thumb:hover .overlay {
-            opacity: 1;
-        }
-
-        /* CONTACT card */
-        #contact {
-            max-width: 600px;
-            margin: 0 auto 120px;
-            background: rgba(23, 23, 23, .7);
-            border-radius: 24px;
-            padding: 32px 40px;
-            box-shadow: 0 0 40px rgba(232, 197, 71, .06);
-            text-align: center;
-        }
-
-        #contact h2 {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 18px;
-        }
-
-        #contact p {
-            color: var(--muted);
-            font-size: 1.05rem;
-        }
-
-        /* modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, .6);
-            z-index: 1200;
-        }
-
-        .modal.open {
-            display: flex;
-        }
-
-        .modal .panel {
-            max-width: 900px;
-            width: 94%;
-            background: var(--panel);
-            padding: 18px;
-            border-radius: 12px;
-        }
-
-        .modal img {
-            width: 100%;
-            height: auto;
+        .comment-item {
+            background: var(--card);
+            padding: 12px;
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        /* misc */
-        #snackbar {
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 28px;
-            background: #111;
-            padding: 12px 18px;
-            border-radius: 8px;
-            color: #fff;
-            opacity: 0;
-            transition: opacity .3s;
-            z-index: 1300;
+        .comment-meta {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
         }
 
-        #snackbar.show {
-            opacity: 1;
+        .comment-body {
+            white-space: pre-wrap;
+            color: var(--text);
         }
 
-        footer {
-            margin-top: 60px;
-            padding: 40px 0;
-            text-align: center;
-            color: #999;
-        }
+        /* 小画面対応 */
+        @media (max-width:520px) {
+            .wrap {
+                padding: 12px;
+            }
 
-        /* responsive */
-        @media (max-width:900px) {
-            #about {
+            .comment-form .row {
                 flex-direction: column;
-                text-align: center;
-            }
-
-            .gallery {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            }
-        }
-
-        @media (max-width:480px) {
-            .hero h1 {
-                font-size: 8vw;
-            }
-
-            .hero h2 {
-                font-size: 1.1rem;
-            }
-
-            .gallery {
-                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 
 <body>
+    <main class="wrap" role="main">
+        <h1>コメント</h1>
 
-    <nav class="navbar" role="navigation" aria-label="Main" id="navbar">
-        <a href="#hero">Home</a>
-        <a href="#about">About</a>
-        <a href="#works">Works</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#contact">Contact</a>
-        <a href="comments.html">Comments</a>
-    </nav>
+        <!-- コメントフォーム -->
+        <form id="comment-form" class="comment-form" aria-label="コメントフォーム">
+            <div class="row">
+                <input type="text" name="name" placeholder="名前（任意）" maxlength="100" />
+            </div>
+            <div style="margin-top:10px;">
+                <textarea name="comment" placeholder="コメントを入力してください（必須）" rows="4" required maxlength="2000"></textarea>
+            </div>
+            <div class="controls">
+                <button type="submit" class="btn">投稿</button>
+                <div style="color:var(--muted); font-size:0.9rem;">投稿はリロードで確実に反映されます。即時表示も試みます。</div>
+            </div>
+        </form>
 
-    <main>
-        <section id="hero" class="hero" tabindex="-1" aria-label="Introduction">
-            <h1>菅原 一郎</h1>
-            <h2>フィルムカメラの感触を残す、自作デジタルバック</h2>
-            <div class="social-links" aria-label="Social media links">
-                <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">🐦</a>
-                <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">📷</a>
-                <a href="https://github.com/" target="_blank" rel="noopener noreferrer">💻</a>
-                <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer">🔗</a>
-            </div>
-        </section>
-
-        <section id="about" tabindex="-1" aria-label="About section">
-            <div class="portrait" aria-hidden="true">
-                <img src="portrait.jpg" alt="Portrait of Ichiro Sugawara" />
-            </div>
-            <div class="text">
-                <h2>About Me</h2>
-                <p>私は <strong>写真家</strong> であり、<strong>開発者</strong> でもあります。Raspberry Pi と HQ Camera を使った
-                    <strong>デジタルバック</strong> の自作を通じて、<strong>フィルムカメラの感触</strong> をデジタルに融合させています。</p>
-                <p>制作過程では多くの <strong>障害</strong> に直面しましたが、それらを乗り越えることで新しい <strong>学び</strong> と <strong>作品</strong>
-                    を生み出しています。</p>
-            </div>
-        </section>
-
-        <section id="works" tabindex="-1" aria-label="Selected works">
-            <h2>Selected Works</h2>
-            <div class="gallery" id="gallery">
-                <!-- サムネイルは下のスクリプトで自動生成 -->
-            </div>
-        </section>
-
-        <section id="gallery" tabindex="-1" aria-label="Gallery (expanded)">
-            <h2 style="text-align:center;color:var(--accent);margin-bottom:18px">Gallery</h2>
-            <div class="gallery" id="gallery2">
-                <!-- 追加ギャラリー（必要なら画像を増やしてください） -->
-            </div>
-        </section>
-
-        <section id="contact" tabindex="-1" aria-label="Contact section">
-            <div id="contact" class="contact">
-                <h2>Contact</h2>
-                <p>作品の依頼や展示のご相談はメールでご連絡ください。</p>
-                <a href="mailto:your.email@example.com" class="email"
-                    style="color:var(--accent);font-weight:700;text-decoration:none">your.email@example.com</a>
-                <div class="social-icons" style="margin-top:20px">
-                    <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">🐦</a>
-                    <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">📷</a>
-                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer">💻</a>
-                </div>
-            </div>
+        <!-- 投稿一覧 -->
+        <section aria-live="polite" style="margin-top:18px;">
+            <h2 style="margin:0 0 8px 0; color:var(--accent);">投稿一覧</h2>
+            <ul id="comment-list" aria-label="投稿一覧">
+                <li class="comment-item" id="loading">読み込み中...</li>
+            </ul>
         </section>
     </main>
 
-    <footer>
-        <p>© 2025 菅原 一郎</p>
-    </footer>
-
-    <!-- Lightbox modal for gallery -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"
-        aria-describedby="modalDesc">
-        <div class="panel" id="modalPanel">
-            <button id="closeModal" aria-label="Close"
-                style="float:right;background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-            <div id="modalContent"></div>
-        </div>
-    </div>
-
-    <div id="snackbar" role="status" aria-live="polite">アクション完了</div>
-
     <script>
-        /* ===== sample gallery data (replace with your photos) ===== */
-        const works = [
-            { id: 'w1', title: 'Shinjuku Station', src: 'photo.jpeg', desc: 'ISO 400 · 77mm · f/5.6 · 1/30s' },
-            { id: 'w2', title: 'Night Walk', src: 'photo2.jpg', desc: 'ISO 800 · 50mm · f/2.8' },
-            { id: 'w3', title: 'Analog Still', src: 'photo3.jpg', desc: 'ISO 200 · 35mm · f/4' },
-            { id: 'w4', title: 'Digital Back Test', src: 'photo4.jpg', desc: 'Raspberry Pi HQ Camera' },
-            { id: 'w5', title: 'Portrait Study', src: 'photo5.jpg', desc: 'Natural light portrait' },
-            { id: 'w6', title: 'Print Mockup', src: 'photo6.jpg', desc: 'Exhibition print' }
-        ];
+        /* ===== ブラウザ側 JavaScript（そのまま貼る） ===== */
 
-        const gallery = document.getElementById('gallery');
-        works.forEach(w => {
-            const t = document.createElement('div');
-            t.className = 'thumb';
-            t.tabIndex = 0;
-            t.setAttribute('data-id', w.id);
-            t.setAttribute('role', 'button');
-            t.setAttribute('aria-label', `${w.title}: ${w.desc}`);
-            t.innerHTML = `<img src="${w.src}" alt="${w.title}"><div class="overlay"><div>${w.title}</div><div class="desc">${w.desc}</div></div>`;
-            t.addEventListener('click', () => openModal(w));
-            t.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(w); } });
-            gallery.appendChild(t);
-        });
+        (function () {
+            const form = document.getElementById('comment-form');
+            const list = document.getElementById('comment-list');
+            const loadingEl = document.getElementById('loading');
 
-        /* modal */
-        const modal = document.getElementById('modal');
-        const modalContent = document.getElementById('modalContent');
-        const closeModal = document.getElementById('closeModal');
-        let lastFocusedThumb = null;
-        function openModal(w) {
-            modalContent.innerHTML = `<h3 id="modalTitle" style="margin:0 0 10px;color:var(--accent)">${w.title}</h3><img src="${w.src}" alt="${w.title}"><p id="modalDesc" style="color:var(--muted);margin-top:8px">${w.desc}</p>`;
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-            closeModal.focus();
-        }
-        function hideModal() {
-            modal.classList.remove('open');
-            document.body.style.overflow = '';
-            if (lastFocusedThumb) lastFocusedThumb.focus();
-        }
-        closeModal.addEventListener('click', hideModal);
-        modal.addEventListener('click', e => { if (e.target === modal) hideModal(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) hideModal(); });
-        const galleryContainer = document.getElementById('gallery');
-        galleryContainer.addEventListener('focusin', e => { if (e.target.classList.contains('thumb')) lastFocusedThumb = e.target; });
+            function escapeHtml(s) {
+                if (!s) return '';
+                return String(s)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
 
-        /* snackbar */
-        function showSnackbar(msg) {
-            const sb = document.getElementById('snackbar');
-            sb.textContent = msg;
-            sb.classList.add('show');
-            setTimeout(() => sb.classList.remove('show'), 2800);
-        }
+            async function loadComments() {
+                try {
+                    const res = await fetch('/.netlify/functions/getComments');
+                    if (!res.ok) {
+                        list.innerHTML = '<li class="comment-item">コメントの取得に失敗しました。</li>';
+                        console.error('getComments status', res.status);
+                        return;
+                    }
+                    const comments = await res.json();
+                    renderComments(comments);
+                } catch (err) {
+                    list.innerHTML = '<li class="comment-item">コメントの読み込み中にエラーが発生しました。</li>';
+                    console.error(err);
+                }
+            }
 
-        /* reveal on scroll */
-        function revealOnScroll() {
-            document.querySelectorAll('section').forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top < (window.innerHeight || document.documentElement.clientHeight) - 100) {
-                    section.classList.add('in-view');
+            function renderComments(comments) {
+                list.innerHTML = '';
+                if (!Array.isArray(comments) || comments.length === 0) {
+                    list.innerHTML = '<li class="comment-item">まだコメントはありません。</li>';
+                    return;
+                }
+                comments.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'comment-item';
+                    const time = c.createdAt ? new Date(c.createdAt).toLocaleString() : '';
+                    li.innerHTML = '<div class="comment-meta">' + escapeHtml(c.name || '名無し') + ' ・ ' + escapeHtml(time) + '</div>'
+                        + '<div class="comment-body">' + escapeHtml(c.comment || '') + '</div>';
+                    list.appendChild(li);
+                });
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fd = new FormData(form);
+                const name = (fd.get('name') || '').toString().trim().slice(0, 100) || '名無し';
+                const comment = (fd.get('comment') || '').toString().trim().slice(0, 2000);
+                if (!comment) { alert('コメントを入力してください。'); return; }
+                const payload = { name, comment, createdAt: new Date().toISOString() };
+
+                // POST to Netlify Function
+                try {
+                    const res = await fetch('/.netlify/functions/addComment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                        const text = await res.text();
+                        console.error('addComment error', res.status, text);
+                        alert('コメントの投稿に失敗しました。');
+                        return;
+                    }
+                    form.reset();
+                    // 即時反映を試みる
+                    await loadComments();
+                } catch (err) {
+                    console.error(err);
+                    alert('ネットワークエラーで投稿できませんでした。');
                 }
             });
-        }
-        window.addEventListener('scroll', revealOnScroll);
-        window.addEventListener('load', () => { revealOnScroll(); });
 
-        /* Navbar behavior: highlight current section link */
-        const navLinks = document.querySelectorAll('.navbar a');
-        function highlightNav() {
-            const fromTop = window.scrollY + 80;
-            navLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                if (!href || !href.startsWith('#')) return;
-                const section = document.querySelector(href);
-                if (!section) return;
-                if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
-                    link.style.color = 'var(--accent)';
-                } else {
-                    link.style.color = '#fff';
-                }
+            // 初回ロード
+            window.addEventListener('load', () => {
+                loadComments();
             });
-        }
-        window.addEventListener('scroll', highlightNav);
-        window.addEventListener('load', highlightNav);
+
+        })();
     </script>
-
 </body>
 
 </html>

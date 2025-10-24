@@ -1,121 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sugawara Website</title>
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sugawara — Demo</title>
+    <meta name="description" content="コメント・お気に入り・ダークモードを備えたデモ" />
     <style>
+        /* カラー設定（白/グレー基調、アクセント＝黄色） */
         :root {
-            --bg: #111;
-            --text: #eee;
-            --muted: #aaa;
-            --accent: #58a6ff;
-            --panel: #1c1c1c;
-            --card: #222;
+            --bg: #ffffff;
+            --surface: #f4f5f7;
+            --panel: #efefef;
+            --muted: #6b7280;
+            --accent: #ffcc00;
+            /* 黄色 */
+            --text: #0b0b0b;
+            --card-border: rgba(0, 0, 0, 0.06);
         }
 
+        body.dark {
+            --bg: #0b0b0c;
+            --surface: #0f1112;
+            --panel: #17181a;
+            --muted: #9ca3af;
+            --accent: #ffcc00;
+            --text: #fff;
+            --card-border: rgba(255, 255, 255, 0.04);
+        }
+
+        html,
         body {
+            height: 100%;
             margin: 0;
-            padding: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: "Inter", "Hiragino Sans", "Meiryo", sans-serif;
-            line-height: 1.6;
+            font-family: Inter, "Noto Sans JP", system-ui, -apple-system;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 32px auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         header {
-            background: var(--panel);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #222;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--accent);
-        }
-
-        main {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        section {
-            margin-bottom: 60px;
-        }
-
-        h2 {
-            color: var(--accent);
-            border-left: 4px solid var(--accent);
-            padding-left: 10px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.85rem;
-            color: var(--muted);
-            border-top: 1px solid #222;
-        }
-
-        /* === コメントセクション === */
-        #comments {
-            padding: 20px;
-            background: var(--panel);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        #comment-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        #comment-form input,
-        #comment-form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            background: var(--card);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 1rem;
-            margin-bottom: 10px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        #comment-form button {
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), #f2b900);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #111;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* 全体レイアウト */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width:980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* コメントセクション（ページ上部） */
+        #comments-root {
+            background: var(--surface);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
+        }
+
+        #comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[name="postal"],
+        textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: var(--panel);
+            color: var(--text);
+            font-size: 0.95rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
             background: var(--accent);
             color: #111;
             border: none;
+            padding: 10px 14px;
             border-radius: 8px;
-            padding: 10px 16px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        #comment-form button:hover {
-            background: #77b3ff;
+        .meta-note {
+            font-size: 0.9rem;
+            color: var(--muted);
         }
 
         #comment-list {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 14px 0 0 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .comment-item {
-            background: var(--card);
-            border-radius: 10px;
+            background: var(--panel);
             padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
         }
 
         .comment-meta {
@@ -126,105 +171,336 @@
 
         .comment-body {
             white-space: pre-wrap;
+            color: var(--text);
+        }
+
+        /* 右サイド（お気に入り） */
+        .panel {
+            background: var(--surface);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+        }
+
+        .panel h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: var(--panel);
+            border: 1px solid var(--card-border);
+            margin-bottom: 8px;
+        }
+
+        .bookmark-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--accent);
+            padding: 6px 8px;
+            border-radius: 6px;
+        }
+
+        .small-muted {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* 記事カード */
+        .articles {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .article {
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: var(--panel);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .article .title {
+            font-weight: 700;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .article .meta {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        footer {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>Sugawara Website</h1>
-    </header>
+    <div class="container">
+        <header>
+            <div class="brand" aria-hidden="true">
+                <div class="logo">S</div>
+                <div>
+                    <h1>Sugawara — Demo</h1>
+                    <div class="small-muted">参考: beyond-design-into-experience</div>
+                </div>
+            </div>
 
-    <main>
-        <section id="intro">
-            <h2>Welcome</h2>
-            <p>これはテストサイトです。下にコメント機能を追加しました。</p>
-        </section>
+            <div class="controls">
+                <button id="dark-toggle" class="bookmark-btn" aria-pressed="false" title="ダークモード切替">🌓</button>
+            </div>
+        </header>
 
-        <!-- === コメントセクション === -->
-        <section id="comments" tabindex="-1" aria-label="Comments">
-            <h2>コメント</h2>
+        <!-- コメント（ページ一番上） -->
+        <section id="comments-root" aria-label="コメントセクション">
+            <h2 style="margin:0 0 10px 0;color:var(--accent);">コメント</h2>
 
-            <form id="comment-form" aria-label="コメントフォーム">
-                <input type="text" name="name" placeholder="名前（任意）">
-                <textarea name="comment" placeholder="コメントを入力してください" required rows="4"></textarea>
-                <button type="submit">投稿</button>
+            <form id="comment-form" autocomplete="on" aria-label="コメントフォーム">
+                <div class="row">
+                    <input class="form-left" type="text" name="name" placeholder="氏名（自動補完: name）" autocomplete="name" />
+                    <input class="form-left" type="email" name="email" placeholder="メール（自動補完: email）"
+                        autocomplete="email" />
+                </div>
+
+                <div class="row">
+                    <input type="text" name="postal" placeholder="郵便番号（自動補完）" autocomplete="postal-code" />
+                    <input type="text" name="address" placeholder="住所（自動補完）" autocomplete="street-address" />
+                </div>
+
+                <textarea name="comment" placeholder="コメントを入力してください" required rows="4" autocomplete="off"></textarea>
+
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <button type="submit" class="btn-primary">投稿する</button>
+                    <div class="meta-note">フォームは自動補完に対応しています。</div>
+                </div>
             </form>
 
-            <ul id="comment-list">
-                <!-- コメントがここに表示されます -->
+            <ul id="comment-list" aria-live="polite" style="margin-top:12px;">
+                <li class="comment-item">読み込み中...</li>
             </ul>
         </section>
-        <!-- /コメントセクション -->
 
-    </main>
+        <!-- メイン / サイドレイアウト（お気に入りのみ） -->
+        <div class="layout" style="margin-top:18px;">
+            <main>
+                <section class="panel">
+                    <h3>記事一覧</h3>
+                    <div class="articles" id="articles">
+                        <article class="article" data-id="a1" data-title="デザインの先へ">
+                            <div>
+                                <div class="title">デザインの先へ — 体験設計の考え方</div>
+                                <div class="meta">カテゴリ: UI / UX</div>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button class="bookmark-btn" data-id="a1">☆</button>
+                                <button class="bookmark-btn view-btn" data-id="a1">表示</button>
+                            </div>
+                        </article>
 
-    <footer>
-        <p>© 2025 Sugawara</p>
-    </footer>
+                        <article class="article" data-id="a2" data-title="ブランディングとアニメーション">
+                            <div>
+                                <div class="title">ブランディングとアニメーションの役割</div>
+                                <div class="meta">カテゴリ: Motion</div>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button class="bookmark-btn" data-id="a2">☆</button>
+                                <button class="bookmark-btn view-btn" data-id="a2">表示</button>
+                            </div>
+                        </article>
+
+                        <article class="article" data-id="a3" data-title="パフォーマンスとアクセシビリティ">
+                            <div>
+                                <div class="title">パフォーマンスとアクセシビリティの両立</div>
+                                <div class="meta">カテゴリ: Performance</div>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <button class="bookmark-btn" data-id="a3">☆</button>
+                                <button class="bookmark-btn view-btn" data-id="a3">表示</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </main>
+
+            <aside>
+                <div class="panel" id="favorites-panel">
+                    <h3>お気に入り</h3>
+                    <div id="favorites-list">
+                        <div class="small-muted">まだお気に入りはありません。</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <footer>
+            <small>© 2025 Sugawara</small>
+        </footer>
+    </div>
 
     <script>
-        /* === コメント機能 === */
-        (async function () {
-            const list = document.getElementById('comment-list');
-            const form = document.getElementById('comment-form');
+        (function () {
+            // Utilities
+            const $ = s => document.querySelector(s);
+            const $$ = s => Array.from(document.querySelectorAll(s));
+            const nowISO = () => new Date().toISOString();
+            function escapeHtml(s) { if (!s) return ''; return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;'); }
 
+            // DOM
+            const form = $('#comment-form');
+            const commentList = $('#comment-list');
+            const favoritesListEl = $('#favorites-list');
+            const darkToggle = $('#dark-toggle');
+
+            // Local keys
+            const KEY_FAVS = 'sgwr_favs_v1';
+            const KEY_DARK = 'sgwr_dark_v1';
+
+            // Dark mode init
+            (function initDark() {
+                const saved = localStorage.getItem(KEY_DARK);
+                if (saved === 'true') document.body.classList.add('dark');
+                darkToggle.addEventListener('click', () => {
+                    const on = document.body.classList.toggle('dark');
+                    localStorage.setItem(KEY_DARK, on ? 'true' : 'false');
+                });
+            })();
+
+            // COMMENTS: use server functions (assumed working)
             async function loadComments() {
                 try {
                     const res = await fetch('/.netlify/functions/getComments');
-                    if (!res.ok) throw new Error('getComments failed');
-                    const comments = await res.json();
-                    list.innerHTML = '';
-                    (comments || []).forEach(c => {
-                        const li = document.createElement('li');
-                        li.className = 'comment-item';
-                        li.innerHTML = `
-            <div class="comment-meta">${escapeHtml(c.name || '名無し')} ・ ${new Date(c.createdAt || Date.now()).toLocaleString()}</div>
-            <div class="comment-body">${escapeHtml(c.comment)}</div>
-          `;
-                        list.appendChild(li);
-                    });
-                } catch (err) {
-                    console.error(err);
-                    list.innerHTML = '<li class="comment-item">コメントの読み込みに失敗しました。</li>';
+                    if (!res.ok) throw new Error('getComments failed: ' + res.status);
+                    const arr = await res.json();
+                    renderComments(arr);
+                } catch (e) {
+                    console.error(e);
+                    // サーバがダメなら表示エラーだけにする（フォールバックは不要と指定）
+                    commentList.innerHTML = '<li class="comment-item">コメントの読み込みに失敗しました。</li>';
                 }
+            }
+
+            function renderComments(arr) {
+                commentList.innerHTML = '';
+                if (!Array.isArray(arr) || arr.length === 0) {
+                    commentList.innerHTML = '<li class="comment-item">まだコメントはありません。</li>';
+                    return;
+                }
+                // 新着順（作成日時がある場合は古い→新しい）
+                arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                arr.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'comment-item';
+                    const time = c.createdAt ? new Date(c.createdAt).toLocaleString() : '';
+                    li.innerHTML = '<div class="comment-meta">' + escapeHtml(c.name || '名無し') + ' ・ ' + escapeHtml(time) + '</div>'
+                        + '<div class="comment-body">' + escapeHtml(c.comment || '') + '</div>';
+                    commentList.appendChild(li);
+                });
             }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const fd = new FormData(form);
                 const payload = {
-                    name: (fd.get('name') || '名無し'),
-                    comment: (fd.get('comment') || ''),
-                    createdAt: new Date().toISOString()
+                    name: (fd.get('name') || '').toString().slice(0, 100) || '名無し',
+                    email: (fd.get('email') || '').toString().slice(0, 200),
+                    postal: (fd.get('postal') || '').toString().slice(0, 40),
+                    address: (fd.get('address') || '').toString().slice(0, 200),
+                    comment: (fd.get('comment') || '').toString().slice(0, 2000),
+                    createdAt: nowISO()
                 };
+                if (!payload.comment) { alert('コメントを入力してください。'); return; }
                 try {
                     const res = await fetch('/.netlify/functions/addComment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    if (!res.ok) throw new Error('投稿失敗');
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        console.error('addComment failed', res.status, txt);
+                        alert('コメント送信に失敗しました。');
+                        return;
+                    }
                     form.reset();
+                    // サーバ保存済みなので再取得して反映
                     await loadComments();
+                    alert('投稿しました。反映はリロードで確実に確認できます。');
                 } catch (err) {
-                    alert('コメント送信に失敗しました。');
                     console.error(err);
+                    alert('ネットワークエラーで投稿できませんでした。');
                 }
             });
 
-            function escapeHtml(s) {
-                if (!s) return '';
-                return String(s)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
+            // FAVORITES (localStorage)
+            function loadFavs() { try { return JSON.parse(localStorage.getItem(KEY_FAVS) || '[]'); } catch { return []; } }
+            function saveFavs(arr) { localStorage.setItem(KEY_FAVS, JSON.stringify(arr)); }
+            function toggleFav(id, title) {
+                const arr = loadFavs();
+                const idx = arr.findIndex(x => x.id === id);
+                if (idx >= 0) arr.splice(idx, 1);
+                else arr.push({ id, title, createdAt: nowISO() });
+                saveFavs(arr);
+                renderFavs();
+                updateArticleButtons();
+            }
+            function renderFavs() {
+                const arr = loadFavs();
+                if (!arr.length) { favoritesListEl.innerHTML = '<div class="small-muted">まだお気に入りはありません。</div>'; return; }
+                favoritesListEl.innerHTML = '';
+                arr.slice().reverse().forEach(f => {
+                    const el = document.createElement('div');
+                    el.className = 'list-item';
+                    el.innerHTML = '<div style="flex:1;"><div style="font-weight:700;color:var(--text)">' + escapeHtml(f.title) + '</div><div class="small-muted">' + new Date(f.createdAt).toLocaleString() + '</div></div><div><button class="bookmark-btn remove-fav" data-id="' + escapeHtml(f.id) + '">解除</button></div>';
+                    favoritesListEl.appendChild(el);
+                });
+                $$('.remove-fav').forEach(b => b.addEventListener('click', () => { toggleFav(b.dataset.id); }));
             }
 
-            // 初期ロード
-            loadComments();
+            // Articles UI
+            function initArticles() {
+                $$('.view-btn').forEach(b => b.addEventListener('click', () => {
+                    const id = b.dataset.id;
+                    const art = document.querySelector('.article[data-id="' + id + '"]');
+                    if (!art) return;
+                    art.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }));
+                $$('.bookmark-btn').forEach(b => b.addEventListener('click', () => {
+                    const id = b.dataset.id;
+                    const art = document.querySelector('.article[data-id="' + id + '"]');
+                    toggleFav(id, art ? art.dataset.title : id);
+                }));
+                updateArticleButtons();
+            }
+            function updateArticleButtons() {
+                const favs = loadFavs().map(x => x.id);
+                $$('.bookmark-btn').forEach(b => {
+                    if (b.dataset.id && favs.includes(b.dataset.id)) b.textContent = '★';
+                    else if (b.dataset.id) b.textContent = '☆';
+                });
+            }
+
+            // 初期実行
+            (function init() {
+                loadComments();
+                initArticles();
+                renderFavs();
+            })();
+
         })();
     </script>
 </body>

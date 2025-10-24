@@ -99,20 +99,10 @@
     <section id="comments" class="comment-section">
         <h2>コメント</h2>
         <form id="comment-form">
-            <div class="inputContainer">
-                <input required class="customInput" type="text" id="name" />
-                <label class="inputLabel">Your Name</label>
-                <div class="inputUnderline"></div>
-            </div>
-
-            <div class="inputContainer">
-                <input required class="customInput" type="text" id="comment" />
-                <label class="inputLabel">Comment</label>
-                <div class="inputUnderline"></div>
-            </div>
-
-            <button type="submit" class="submit-btn">送信</button>
-        </form>
+                <input name="name" placeholder="Your Name">
+                <input name="comment" placeholder="Comment">
+                <button type="submit">送信</button>
+            </form>
         <ul id="comment-list"></ul>
     </section>
 

@@ -746,3 +746,232 @@ nav {
    ナイトモードスイッチ（完全収録）
 ================================= */
 /* あなたの提示コードをそのまま全収録 */
+
+// script.js
+document.addEventListener('DOMContentLoaded', ()=> {
+        // 要素参照（id 前提）
+        const commentForm=document.getElementById('comment-form');
+        const commentList=document.getElementById('comment-list');
+        const nameInput=document.getElementById('name');
+        const commentInput=document.getElementById('comment');
+        const darkToggle=document.getElementById('input');
+        const hero=document.querySelector('.hero-section');
+
+        // --- helper ---
+        const safeJSON=txt=> {
+            try {
+                return JSON.parse(txt);
+            }
+
+            catch {
+                return null;
+            }
+        }
+
+        ;
+
+        // placeholder 空文字を付けて CSS の :placeholder-shown 挙動を使えるようにする
+        [nameInput, commentInput].forEach(inp=> {
+                if (inp && !inp.hasAttribute('placeholder')) inp.setAttribute('placeholder', ' ');
+            });
+
+        // --- コメント表示 ---
+        function renderComments(arr) {
+            if ( !Array.isArray(arr)) arr=[];
+
+            // ソート: 作成日時があれば新しい順（新しいが上）にする
+            arr.sort((a, b)=> {
+                    const ta=a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                    const tb=b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                    return tb - ta;
+                });
+
+            commentList.innerHTML='';
+
+            if (arr.length===0) {
+                commentList.innerHTML='<li class="comment-item">まだコメントはありません。</li>';
+                return;
+            }
+
+            arr.forEach(c=> {
+                    const li=document.createElement('li');
+                    li.className='comment-item';
+                    const time=c.createdAt ? (new Date(c.createdAt)).toLocaleString() : '';
+
+                    li.innerHTML=`<div class="comment-meta" >$ {
+                        escapeHtml(c.name || '名無し')
+                    }
+
+                    $ {
+                        time ? '・ ' + escapeHtml(time) : ''
+                    }
+
+                    </div> <div class="comment-body" >$ {
+                        escapeHtml(c.comment || '')
+                    }
+
+                    </div>`;
+                    commentList.appendChild(li);
+                });
+        }
+
+        function escapeHtml(s) {
+            if ( !s) return '';
+            return String(s) .replaceAll('&', '&amp;') .replaceAll('<', '&lt;') .replaceAll('>', '&gt;') .replaceAll('"', '&quot;') .replaceAll("'", '&#39;');
+        }
+
+        // --- サーバからロード、フォールバック to localStorage ---
+        async function loadComments() {
+            try {
+                const res=await fetch('/.netlify/functions/getComments');
+                if ( !res.ok) throw new Error('getComments failed: ' + res.status);
+                const data=await res.json();
+                renderComments(data);
+
+                // ローカルにコピーしてフォールバック用
+                try {
+                    localStorage.setItem('comments', JSON.stringify(data));
+                }
+
+                catch {}
+            }
+
+            catch (err) {
+                console.warn('getComments error, using localStorage', err);
+                const local=safeJSON(localStorage.getItem('comments')) || [];
+                renderComments(local);
+            }
+        }
+
+        // --- 送信処理 ---
+        commentForm && commentForm.addEventListener('submit', async (e)=> {
+                e.preventDefault();
+                const name=(nameInput && nameInput.value || '').trim() || '名無し';
+                const comment=(commentInput && commentInput.value || '').trim();
+
+                if ( !comment) {
+                    alert('コメントを入力してください。');
+                    return;
+                }
+
+                const payload= {
+                    name, comment, createdAt: new Date().toISOString()
+                }
+
+                ;
+
+                // optimistic: ローカルに追加（表示の即時反映）
+                try {
+                    const current=safeJSON(localStorage.getItem('comments')) || [];
+                    current.unshift(payload);
+                    localStorage.setItem('comments', JSON.stringify(current));
+                }
+
+                catch {}
+
+                // try server
+                try {
+                    const res=await fetch('/.netlify/functions/addComment', {
+
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+
+                        ,
+                        body: JSON.stringify(payload)
+                    });
+                if ( !res.ok) throw new Error('addComment failed: ' + res.status);
+                // 成功したら再読み込み（確実に整列）
+                await loadComments();
+            }
+
+            catch (err) {
+                console.warn('addComment failed, saved locally', err);
+                // 既に保存済みローカルを表示
+                const local=safeJSON(localStorage.getItem('comments')) || [];
+                renderComments(local);
+            }
+
+            commentForm.reset();
+
+            // placeholder trick のために空白を再設定（ラベル挙動を安定）
+            [nameInput, commentInput].forEach(i=> {
+                    if (i) i.setAttribute('placeholder', ' ');
+                });
+        });
+
+    // --- ダークモードトグル ---
+    try {
+        const savedTheme=localStorage.getItem('theme');
+
+        if (savedTheme==='dark') {
+            document.body.classList.add('dark');
+            if (darkToggle) darkToggle.checked=true;
+        }
+
+        else {
+            if (darkToggle) darkToggle.checked=false;
+        }
+    }
+
+    catch {}
+
+    if (darkToggle) {
+        darkToggle.addEventListener('change', ()=> {
+                const on= ! !darkToggle.checked;
+                document.body.classList.toggle('dark', on);
+
+                try {
+                    localStorage.setItem('theme', on ? 'dark' : 'light');
+                }
+
+                catch {}
+            });
+    }
+
+    // --- Hero パララックス（軽い効果） ---
+    if (hero) {
+
+        // 初期
+        const setHero=()=> {
+            const sc=window.scrollY;
+
+            // 背景位置を少し動かす（縦方向）
+            hero.style.backgroundPosition=`center $ {
+                -sc * 0.2
+            }
+
+            px`;
+            // overlay パララックス（スケールごく僅か）
+            const overlay=hero.querySelector('.hero-overlay');
+
+            if (overlay) {
+                const scale=1 + Math.min(sc / 2000, 0.03);
+
+                overlay.style.transform=`translateY($ {
+                        Math.min(sc / 10, 40)
+                    }
+
+                    px) scale($ {
+                        scale
+                    })`;
+            }
+        }
+
+        ;
+        setHero();
+
+        window.addEventListener('scroll', ()=> {
+                requestAnimationFrame(setHero);
+            }
+
+            , {
+            passive: true
+        });
+    window.addEventListener('resize', ()=> requestAnimationFrame(setHero));
+}
+
+// --- 初回ロード ---
+loadComments();
+});

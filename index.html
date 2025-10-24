@@ -4,22 +4,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio - 菅原一郎</title>
+    <title>SGWR Portfolio</title>
     <link rel="stylesheet" href="style.css" />
-    <script defer src="script.js"></script>
 </head>
 
 <body>
+    <!-- ===== ナビゲーションバー ===== -->
     <nav>
-        <div class="nav-left">Ichiro Sugawara</div>
+        <div class="nav-left">SGWR Portfolio</div>
         <div class="nav-links">
-            <a href="#comments" class="active">Comments</a>
-            <a href="#about">About</a>
-            <a href="#library">Library</a>
+            <a href="index.html" class="active">Home</a>
+            <a href="library.html">Library</a>
             <a href="article.html">Article</a>
         </div>
 
-        <!-- ナイトモードスイッチ（省略せず全記載） -->
+        <!-- ===== ダークモードスイッチ（あなたの完全版） ===== -->
         <label class="switch">
             <input id="input" type="checkbox" />
             <div class="slider round">
@@ -42,6 +41,7 @@
                     <svg id="light-ray-3" class="light-ray" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="50"></circle>
                     </svg>
+
                     <svg id="cloud-1" class="cloud-dark" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="50"></circle>
                     </svg>
@@ -87,43 +87,90 @@
         </label>
     </nav>
 
-    <!-- Heroセクション -->
-    <section class="hero-section">
+    <!-- ===== Hero Section（背景写真＋タイトル） ===== -->
+    <header class="hero-section">
         <div class="hero-overlay">
-            <h1 class="hero-title">Beyond Design, Into Experience</h1>
-            <p class="hero-subtitle">体験をデザインする、あなたのポートフォリオへようこそ。</p>
+            <h1 class="hero-title">Beyond Design</h1>
+            <p class="hero-subtitle">Into Experience</p>
         </div>
-    </section>
+    </header>
 
-    <!-- コメントセクション -->
-    <section id="comments" class="comment-section">
-        <h2>コメント</h2>
+    <!-- ===== コメントフォーム ===== -->
+    <main class="comment-section">
+        <h2>Comments</h2>
         <form id="comment-form">
-                <input name="name" placeholder="Your Name">
-                <input name="comment" placeholder="Comment">
-                <button type="submit">送信</button>
-            </form>
-        <ul id="comment-list"></ul>
-    </section>
+            <input type="text" name="name" placeholder="お名前" required />
+            <textarea name="comment" placeholder="コメントを入力..." required></textarea>
+            <button type="submit">送信</button>
+        </form>
 
-    <!-- 自己紹介 -->
-    <section id="about" class="about-section">
-        <h2>About Me</h2>
-        <div class="about-container">
-            <img src="pictures/profile.jpg" alt="プロフィール写真" class="about-photo" />
-            <div class="about-text">
-                <h3>菅原 一郎</h3>
-                <p>
-                    学生としてデザインとテクノロジーの交差点を探求しています。
-                    フィルムの質感とデジタルの精度を融合させる表現をテーマに、写真・ウェブ・インタラクションの可能性を追っています。
-                </p>
-            </div>
-        </div>
-    </section>
+        <ul id="comment-list"></ul>
+    </main>
 
     <footer>
-        <p>© 2025 Ichiro Sugawara. All rights reserved.</p>
+        <p>© 2025 SGWR Portfolio</p>
     </footer>
+
+    <script>
+        // コメント送信
+        document
+            .getElementById("comment-form")
+            .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const name = e.target.name.value;
+                const comment = e.target.comment.value;
+
+                try {
+                    const res = await fetch("/.netlify/functions/addComment", {
+                        method: "POST",
+                        body: JSON.stringify({ name, comment }),
+                    });
+                    if (!res.ok) throw new Error("サーバーエラー");
+                    e.target.reset();
+                    loadComments();
+                } catch {
+                    // フォールバック: localStorage に保存
+                    const comments = JSON.parse(localStorage.getItem("comments") || "[]");
+                    comments.push({ name, comment });
+                    localStorage.setItem("comments", JSON.stringify(comments));
+                    e.target.reset();
+                    loadComments();
+                }
+            });
+
+        async function loadComments() {
+            const list = document.getElementById("comment-list");
+            list.innerHTML = "";
+            try {
+                const res = await fetch("/.netlify/functions/getComments");
+                const comments = await res.json();
+                comments.forEach((c) => {
+                    const li = document.createElement("li");
+                    li.textContent = `${c.name}: ${c.comment}`;
+                    list.appendChild(li);
+                });
+            } catch {
+                const local = JSON.parse(localStorage.getItem("comments") || "[]");
+                local.forEach((c) => {
+                    const li = document.createElement("li");
+                    li.textContent = `${c.name}: ${c.comment}`;
+                    list.appendChild(li);
+                });
+            }
+        }
+        loadComments();
+
+        // ===== ダークモード =====
+        const toggle = document.getElementById("input");
+        toggle.addEventListener("change", () => {
+            document.body.classList.toggle("dark", toggle.checked);
+            localStorage.setItem("theme", toggle.checked ? "dark" : "light");
+        });
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark");
+            toggle.checked = true;
+        }
+    </script>
 </body>
 
 </html>
